@@ -1,2 +1,2 @@
-# Projeto-Telao-de-Bingo
-Bingo da Paroquia N.S.A. Registro-sp
+# Projeto-Tel-o-de-Bingo
+Telão de bingo para quermesse
