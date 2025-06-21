@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Escolher Rodada</title>
+  <style>
+    /* Reset simples */
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #121212;
+      margin: 20px;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #bb86fc;
+      margin-bottom: 24px;
+      text-align: center;
+      user-select: none;
+    }
+
+    form#form-rodada {
+      max-width: 400px;
+      margin: 0 auto 30px auto;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    form#form-rodada label {
+      font-weight: 600;
+      font-size: 1.1rem;
+      min-width: 140px;
+      color: #ccc;
+    }
+
+    form#form-rodada input[type=number] {
+      flex-grow: 1;
+      padding: 8px 12px;
+      font-size: 1rem;
+      border: 1.8px solid #bb86fc;
+      border-radius: 5px;
+      background: #1e1e1e;
+      color: #e0e0e0;
+      transition: border-color 0.3s ease;
+    }
+    form#form-rodada input[type=number]::placeholder {
+      color: #888;
+    }
+    form#form-rodada input[type=number]:focus {
+      outline: none;
+      border-color: #7f39fb;
+      box-shadow: 0 0 6px rgba(127, 57, 251, 0.6);
+      background: #2a2a2a;
+    }
+
+    form#form-rodada button {
+      background-color: #bb86fc;
+      color: #121212;
+      border: none;
+      padding: 9px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    form#form-rodada button:hover {
+      background-color: #7f39fb;
+      color: #fff;
+    }
+
+    #btnMostrarRodadas {
+      display: block;
+      margin: 0 auto 20px auto;
+      background-color: #03dac6;
+      border: none;
+      color: #121212;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 10px 25px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    #btnMostrarRodadas:hover {
+      background-color: #00b3a3;
+      color: #fff;
+    }
+
+    #container-rodadas {
+      max-width: 900px;
+      margin: 0 auto;
+      display: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.7);
+      background: #1e1e1e;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+      min-width: 600px;
+      color: #e0e0e0;
+    }
+    thead {
+      background-color: #3700b3;
+      color: #fff;
+      user-select: none;
+    }
+    thead th {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #444;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #2c2c2c;
+    }
+    tbody tr:hover {
+      background-color: #3e3e3e;
+    }
+    tbody td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #444;
+    }
+
+    p {
+      text-align: center;
+      font-style: italic;
+      color: #aaa;
+      padding: 20px 0;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎯 Escolha ou crie uma rodada</h1>
+
+  <form id="form-rodada">
+    <label for="numeroRodada">Número da Rodada:</label>
+    <input type="number" id="numeroRodada" required min="1" />
+    <button type="submit">Começar</button>
+  </form>
+
+  <button id="btnMostrarRodadas">📋 Ver Rodadas</button>
+
+  <div id="container-rodadas" style="margin-top:20px;"></div>
+
+  <script>
+    // Criar rodada e redirecionar para bingo.html
+    document.getElementById('form-rodada').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const numero = document.getElementById('numeroRodada').value;
+
+      const res = await fetch('/api/rounds', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ numero: Number(numero) }) // manda o número
+      });
+      const rodada = await res.json();
+
+      window.location.href = `bingo.html?rodada=${rodada._id}`;
+    });
+
+    // Buscar e mostrar rodadas na tabela
+    document.getElementById('btnMostrarRodadas').addEventListener('click', async () => {
+      const container = document.getElementById('container-rodadas');
+
+      // Se já está visível, esconde e para por aqui
+      if (container.style.display === 'block') {
+        container.style.display = 'none';
+        return;
+      }
+
+      // Se está escondido ou vazio, busca os dados e mostra
+
+      // Busca rodadas
+      const res = await fetch('/api/rounds');
+      const rodadas = await res.json();
+
+      if (rodadas.length === 0) {
+        container.innerHTML = '<p>Nenhuma rodada cadastrada.</p>';
+        container.style.display = 'block';
+        return;
+      }
+
+      // Monta tabela
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      thead.innerHTML = `
+        <tr>
+          <th>Numero</th>
+          <th>Status</th>
+          <th>Início</th>
+          <th>Fim</th>
+          <th>Bolas Sorteadas</th>
+        </tr>
+      `;
+      table.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+      rodadas.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.numero}</td>
+          <td>${r.status}</td>
+          <td>${new Date(r.dataInicio).toLocaleString()}</td>
+          <td>${r.dataFim ? new Date(r.dataFim).toLocaleString() : '-'}</td>
+          <td>${r.bolasSorteadas.map(b => `${b.letra}${b.numero}`).join(', ')}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+
+      container.innerHTML = ''; // limpa
+      container.appendChild(table);
+      container.style.display = 'block'; // mostra
+    });
+  </script>
+</body>
+</html>

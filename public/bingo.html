@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>BINGO - N. S. APARECIDA</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/png" href="arquivos/imagens/favicon.png"/>
+    <link rel="stylesheet" href="arquivos/css/normalize.min.css" />
+    <link rel="stylesheet" href="arquivos/css/flexslider.css" />
+    <link rel="stylesheet" href="arquivos/css/estilo.css" />
+    <script src="arquivos/javascript/jquery.min.js"></script>
+    <script src="arquivos/javascript/jquery.flexslider-min.js"></script>
+</head>
+<body>
+  <style>
+    /* Estilo destacado e centralizado para o botão Encerrar Rodada */
+#btn-encerrar {
+  display: block;
+  margin: 20px auto; /* centraliza horizontal e dá espaçamento superior e inferior */
+  background-color: #bb86fc;
+  color: #121212;
+  border: none;
+  padding: 12px 28px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  user-select: none;
+  box-shadow: 0 4px 10px rgba(187, 134, 252, 0.5);
+  max-width: 220px;
+  text-align: center;
+}
+
+#btn-encerrar:hover {
+  background-color: #7f39fb;
+  color: #fff;
+  box-shadow: 0 6px 15px rgba(127, 57, 251, 0.7);
+}
+
+  </style>
+  <button id="btn-encerrar">Encerrar Rodada</button>
+  <script src="bingo.js"></script>
+</body>
+</html>
